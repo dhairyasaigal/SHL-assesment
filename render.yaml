@@ -1,1 +1,18 @@
-buildCommand: pip install -r requirements.txt && python scripts/build_index.py
+services:
+  - type: web
+    name: shl-agent
+    env: python
+    region: oregon
+    plan: free
+    pythonVersion: "3.11.9"
+    buildCommand: pip install -r requirements.txt && python scripts/build_index.py
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: MODEL_NAME
+        value: poolside/laguna-m.1:free
+        
