@@ -37,12 +37,13 @@ def _call_llm(system: str, messages: list[dict], retries: int = 2) -> str:
     for attempt in range(retries + 1):
         try:
             response = _get_client().chat.completions.create(
-                model=os.getenv("MODEL_NAME", "poolside/laguna-m.1:free"),
+                model=os.getenv("MODEL_NAME", "nvidia/nemotron-3-super-120b-a12b:free"),
                 messages=[{"role": "system", "content": system}] + messages,
                 temperature=0.1,
-                max_tokens=800,   # reduced — faster response
-                timeout=90,       # increased from 25s
-            )
+                max_tokens=2000,  # increased from 800/1000
+                timeout=90,
+            )  
+            
             return response.choices[0].message.content or ""
         except Exception as e:
             if attempt < retries:
@@ -100,6 +101,9 @@ def chat(messages: list[dict]) -> dict:
     clean = enforce_schema(parsed, valid_links)
 
     if force_clarify:
-        clean["recommendations"] = []
+       clean["recommendations"] = [
+    r for r in clean["recommendations"]
+    if r["url"].startswith("https://www.shl.com")
+    ][:10]
 
     return clean

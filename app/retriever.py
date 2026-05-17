@@ -89,7 +89,7 @@ def _build_and_save_index(catalog: list[dict]):
     print(f"Built and saved index with {_index.ntotal} vectors.")
 
 
-def retrieve(query: str, k: int = 10) -> list[dict]:
+def retrieve(query: str, k: int = 7) -> list[dict]:
     """Return top-k catalog items for a given query string."""
     global _index, _catalog
 
